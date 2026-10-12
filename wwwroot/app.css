@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    font-family: 'Vazirmatn', sans-serif;
+    color: #29251f;
+    background: #fcfaf6;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    min-width: 320px;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    min-width: 320px;
+    font-family: 'Vazirmatn', sans-serif;
+}
+
+button, input {
+    font: inherit;
+}
+
+button, a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+a {
+    color: inherit;
+}
+
+#blazor-error-ui {
+    color-scheme: light only;
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    inset-inline: 0;
+    bottom: 0;
+    padding: .8rem 1.25rem;
+    background: #fff2cc;
+    box-shadow: 0 -1px 8px #0002;
+}
+
+#blazor-error-ui .reload {
+    margin-inline: .5rem;
+}
+
+#blazor-error-ui .dismiss {
+    position: absolute;
+    inset-inline-end: .75rem;
+    top: .5rem;
+    cursor: pointer;
+}

@@ -1,0 +1,12 @@
+# Set these as environment variables before running:
+# ZarinPal__MerchantId=<merchant UUID>
+# ZarinPal__PublicBaseUrl=https://your-public-domain
+# ZarinPal__Sandbox=true (use false only after switching to a live merchant)
+# The public HTTPS callback must be reachable by the shopper after payment.
+@baseUrl = http://localhost:5004
+
+### Unknown authority must never be treated as a paid order.
+GET {{baseUrl}}/payment/zarinpal/callback?Status=OK&Authority=not-a-known-payment
+
+### A cancelled payment callback returns the shopper without marking an order paid.
+GET {{baseUrl}}/payment/zarinpal/callback?Status=NOK&Authority=not-a-known-payment

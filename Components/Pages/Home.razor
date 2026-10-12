@@ -1,0 +1,424 @@
+@page "/"
+@rendermode InteractiveServer
+@using System.Globalization
+@using System.ComponentModel.DataAnnotations
+@inject OrderPaymentService OrderPaymentService
+@inject NavigationManager Navigation
+
+<PageTitle>دانه | قهوه‌ای برای حال خوب</PageTitle>
+
+<div class="storefront" dir="rtl">
+    <header class="site-header">
+        <a class="brand" href="/" aria-label="دانه، صفحه اصلی">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 36 36" fill="none">
+                    <path d="M8 15h18v8a9 9 0 0 1-18 0v-8Z" stroke="currentColor" stroke-width="2.3" />
+                    <path d="M26 17h2.5a4 4 0 0 1 0 8H26M12 8c-2 2 2 2 0 5m7-5c-2 2 2 2 0 5" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" />
+                </svg>
+            </span>
+            <span class="brand-name">دانه<span>.</span></span>
+        </a>
+
+        <nav class="main-nav" aria-label="ناوبری اصلی">
+            <a href="#menu">منوی قهوه</a>
+            <a href="#story">داستان ما</a>
+            <a href="#footer">تماس با ما</a>
+        </nav>
+
+        <button class="cart-trigger" @onclick="() => cartIsOpen = true" aria-label="@($"سبد خرید، {CartCount} محصول")">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M3 4h2l2.2 11.1a2 2 0 0 0 2 1.6h8.6a2 2 0 0 0 1.9-1.4L21 9H6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                <circle cx="10" cy="20" r="1.4" fill="currentColor" />
+                <circle cx="18" cy="20" r="1.4" fill="currentColor" />
+            </svg>
+            <span>سبد خرید</span>
+            @if (CartCount > 0)
+            {
+                <span class="cart-count">@CartCount</span>
+            }
+        </button>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-copy">
+                <span class="eyebrow"><span></span> قهوه‌ی تازه، هر روز</span>
+                <h1>روزت رو با<br />یه <em>حالِ خوب</em><br />شروع کن.</h1>
+                <p>قهوه‌های تازه‌برشت، از بهترین مزرعه‌های جهان تا فنجون تو. با عشق انتخاب و برشته شده.</p>
+                <a class="primary-button" href="#menu">
+                    کشف قهوه‌ها
+                    <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16 10H4m0 0 5-5m-5 5 5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </a>
+                <div class="hero-note">
+                    <div class="avatar-stack" aria-hidden="true">
+                        <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=80&h=80&q=80" alt="" />
+                        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=80&h=80&q=80" alt="" />
+                        <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&w=80&h=80&q=80" alt="" />
+                    </div>
+                    <span><strong>۴.۹ از ۵</strong><br />از نگاه ۲,۰۰۰+ قهوه‌دوست</span>
+                </div>
+            </div>
+            <div class="hero-art">
+                <img class="hero-image" src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=1200&q=85" alt="فنجان قهوه تازه در کافه‌ای گرم و دلنشین" />
+                <div class="image-label"><span>✳</span><span>یک فنجان<br />آرامش</span></div>
+                <div class="hero-sticker"><span>تازه‌برشت</span><strong>از مزرعه<br />تا فنجون تو</strong></div>
+            </div>
+            <div class="hero-decoration" aria-hidden="true">d.</div>
+        </section>
+
+        <section class="promise-bar" aria-label="مزایای سفارش">
+            <div><span class="promise-icon">✳</span><span><strong>تازه‌برشت روز</strong><small>همیشه تازه، همیشه خوش‌عطر</small></span></div>
+            <div><span class="promise-icon">⌁</span><span><strong>ارسال رایگان</strong><small>برای سفارش‌های بالای ۷۰۰ هزار</small></span></div>
+            <div><span class="promise-icon">♡</span><span><strong>با عشق انتخاب شده</strong><small>دانه‌های خاص از سراسر دنیا</small></span></div>
+        </section>
+
+        <section class="menu-section" id="menu">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow"><span></span> انتخاب امروز</span>
+                    <h2>قهوه‌ی <em>مورد علاقه‌ت</em></h2>
+                </div>
+                <p>هر دونه، یه داستان. تو کدومش رو<br class="desktop-break" /> برای امروزت انتخاب می‌کنی؟</p>
+            </div>
+
+            <div class="category-tabs" role="tablist" aria-label="دسته‌بندی قهوه‌ها">
+                @foreach (var category in Categories)
+                {
+                    <button class="category-tab @(selectedCategory == category ? "active" : "")"
+                            role="tab"
+                            aria-selected="@(selectedCategory == category)"
+                            @onclick="() => selectedCategory = category">
+                        @category
+                    </button>
+                }
+            </div>
+
+            <div class="product-grid">
+                @foreach (var product in VisibleProducts)
+                {
+                    <article class="product-card" @key="product.Id">
+                        <div class="product-image-wrap">
+                            <img src="@product.Image" alt="@product.Name" loading="lazy" />
+                            @if (!string.IsNullOrEmpty(product.Badge))
+                            {
+                                <span class="product-badge">@product.Badge</span>
+                            }
+                            <button class="quick-add" @onclick="() => AddToCart(product)" aria-label="@($"افزودن {product.Name} به سبد خرید")">+</button>
+                        </div>
+                        <div class="product-info">
+                            <div class="product-meta"><span>@product.Origin</span><span>★ @product.Rating</span></div>
+                            <h3>@product.Name</h3>
+                            <p>@product.Description</p>
+                            <div class="product-bottom">
+                                <span class="product-price">@FormatPrice(product.Price) <small>تومان</small></span>
+                                <span class="product-weight">@product.Weight</span>
+                            </div>
+                        </div>
+                    </article>
+                }
+            </div>
+            <a class="all-coffees" href="#menu">همه‌ی قهوه‌ها <span>←</span></a>
+        </section>
+
+        <section class="story-section" id="story">
+            <div class="story-photo">
+                <img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1100&q=85" alt="عصاره‌گیری قهوه در یک کافه" loading="lazy" />
+                <div class="story-stamp"><span>از ۱۳۹۸</span><strong>با عشق<br />برای تو</strong></div>
+            </div>
+            <div class="story-copy">
+                <span class="eyebrow"><span></span> قصه‌ی دانه</span>
+                <h2>قهوه فقط<br />یه <em>نوشیدنی</em> نیست.</h2>
+                <p>برای ما، قهوه یعنی مکثی کوتاه وسط شلوغی روز. یعنی عطر صبح، گفت‌وگوی دوستانه، و لحظه‌ای که فقط مال خودته. دانه رو ساختیم تا این لحظه‌ها خوش‌طعم‌تر بشن.</p>
+                <a href="#footer" class="text-link">بیشتر درباره‌ی ما <span>←</span></a>
+            </div>
+        </section>
+
+        <section class="newsletter">
+            <span class="newsletter-flower" aria-hidden="true">✳</span>
+            <div><span class="eyebrow">باشگاه قهوه‌دوست‌ها</span><h2>یه فنجون خبر خوب؟</h2><p>از قهوه‌های تازه و پیشنهادهای خوشمزه باخبر شو.</p></div>
+            <form class="newsletter-form" @onsubmit="Subscribe" @onsubmit:preventDefault>
+                <label class="visually-hidden" for="newsletter-email">ایمیل شما</label>
+                <input id="newsletter-email" type="email" placeholder="ایمیلت رو اینجا بنویس..." @bind="email" required />
+                <button type="submit">عضو می‌شم <span>←</span></button>
+                @if (subscribed)
+                {
+                    <span class="subscribe-message">عضویتت انجام شد؛ به‌زودی می‌بینیمت!</span>
+                }
+            </form>
+        </section>
+    </main>
+
+    <footer class="site-footer" id="footer">
+        <a class="brand footer-brand" href="/"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 36 36" fill="none"><path d="M8 15h18v8a9 9 0 0 1-18 0v-8Z" stroke="currentColor" stroke-width="2.3" /><path d="M26 17h2.5a4 4 0 0 1 0 8H26M12 8c-2 2 2 2 0 5m7-5c-2 2 2 2 0 5" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" /></svg></span><span class="brand-name">دانه<span>.</span></span></a>
+        <span>قهوه‌ی خوب، حال خوب. © ۱۴۰۴ دانه</span>
+        <div class="footer-links"><a href="#story">اینستاگرام</a><a href="#footer">پشتیبانی</a></div>
+    </footer>
+</div>
+
+@if (cartIsOpen)
+{
+    <div class="drawer-backdrop" @onclick="() => cartIsOpen = false">
+        <aside class="cart-drawer" dir="rtl" @onclick:stopPropagation="true" aria-label="سبد خرید">
+            <div class="drawer-heading"><div><span class="eyebrow">انتخاب‌های خوشمزه</span><h2>سبد خرید <span>(@CartCount)</span></h2></div><button class="close-drawer" @onclick="() => cartIsOpen = false" aria-label="بستن سبد خرید">×</button></div>
+            @if (cart.Count == 0)
+            {
+                <div class="empty-cart"><span>☕</span><h3>سبدت هنوز خالیه!</h3><p>یه قهوه‌ی خوشمزه انتخاب کن و روزت رو بساز.</p><button class="primary-button" @onclick="() => cartIsOpen = false">دیدن قهوه‌ها</button></div>
+            }
+            else
+            {
+                <div class="cart-items">
+                    @foreach (var line in cart)
+                    {
+                        <div class="cart-line" @key="line.Product.Id">
+                            <img src="@line.Product.Image" alt="" />
+                            <div class="cart-line-info"><strong>@line.Product.Name</strong><span>@FormatPrice(line.Product.Price) تومان</span><div class="quantity-control"><button @onclick="() => ChangeQuantity(line, -1)" aria-label="کم کردن تعداد">−</button><span>@line.Quantity</span><button @onclick="() => ChangeQuantity(line, 1)" aria-label="زیاد کردن تعداد">+</button></div></div>
+                            <button class="remove-item" @onclick="() => RemoveFromCart(line)" aria-label="@($"حذف {line.Product.Name}")">×</button>
+                        </div>
+                    }
+                </div>
+                <div class="cart-summary">
+                    <div class="cart-breakdown">
+                        <div><span>جمع محصولات</span><strong>@FormatPrice(CartSubtotal) تومان</strong></div>
+                        <div><span>هزینه‌ی ارسال</span><strong>@(CartDeliveryFee == 0 ? "رایگان" : $"{FormatPrice(CartDeliveryFee)} تومان")</strong></div>
+                    </div>
+                    <div class="cart-total"><span>مبلغ قابل پرداخت</span><strong>@FormatPrice(CartTotal) تومان</strong></div>
+                    <small>ارسال سفارش‌های بالای ۷۰۰ هزار تومان رایگان است.</small>
+                    <button class="checkout-button" @onclick="Checkout">ادامه‌ی ثبت سفارش <span>←</span></button>
+                </div>
+            }
+        </aside>
+    </div>
+}
+
+@if (checkoutIsOpen)
+{
+    <div class="drawer-backdrop checkout-backdrop" @onclick="CloseCheckout">
+        <section class="checkout-dialog" role="dialog" aria-modal="true" dir="rtl" @onclick:stopPropagation="true" aria-labelledby="checkout-title">
+            <div class="drawer-heading">
+                <div>
+                    <span class="eyebrow">فقط یک قدم تا قهوه‌ی تازه</span>
+                    <h2 id="checkout-title">اطلاعات تحویل سفارش</h2>
+                </div>
+                <button class="close-drawer" @onclick="CloseCheckout" aria-label="بستن فرم سفارش">×</button>
+            </div>
+            <div class="checkout-breakdown">
+                <div><span>جمع محصولات</span><strong>@FormatPrice(CartSubtotal) تومان</strong></div>
+                <div><span>هزینه‌ی ارسال</span><strong>@(CartDeliveryFee == 0 ? "رایگان" : $"{FormatPrice(CartDeliveryFee)} تومان")</strong></div>
+                <div class="checkout-total"><span>مبلغ قابل پرداخت</span><strong>@FormatPrice(CartTotal) تومان</strong></div>
+            </div>
+            <form @onsubmit="StartPaymentAsync" @onsubmit:preventDefault>
+                @if (checkoutValidationErrors.Count > 0)
+                {
+                    <ul class="checkout-validation">
+                        @foreach (var validationError in checkoutValidationErrors)
+                        {
+                            <li>@validationError</li>
+                        }
+                    </ul>
+                }
+                <label for="customer-name">نام و نام خانوادگی</label>
+                <input id="customer-name" @bind="checkoutForm.CustomerName" @bind:event="oninput" autocomplete="name" required minlength="2" maxlength="100" />
+                <label for="customer-mobile">شماره موبایل</label>
+                <input id="customer-mobile" @bind="checkoutForm.Mobile" @bind:event="oninput" autocomplete="tel" inputmode="tel" placeholder="09123456789" required maxlength="11" />
+                <label for="delivery-address">نشانی کامل محل تحویل</label>
+                <textarea id="delivery-address" @bind="checkoutForm.Address" @bind:event="oninput" autocomplete="street-address" rows="3" required minlength="10" maxlength="500"></textarea>
+                @if (!string.IsNullOrEmpty(checkoutError))
+                {
+                    <p class="checkout-error" role="alert">@checkoutError</p>
+                }
+                <button class="checkout-button" type="submit" disabled="@isStartingPayment">
+                    @(isStartingPayment ? "در حال اتصال به درگاه..." : "پرداخت با زرین‌پال")
+                    @if (!isStartingPayment)
+                    {
+                        <span>←</span>
+                    }
+                </button>
+                <p class="payment-disclaimer">پس از ثبت سفارش، برای پرداخت امن به درگاه رسمی زرین‌پال منتقل می‌شوی.</p>
+            </form>
+        </section>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(notice))
+{
+    <div class="toast-message" role="status"><span>✓</span>@notice<button @onclick="() => notice = null" aria-label="بستن پیام">×</button></div>
+}
+
+@code {
+    private static readonly string[] Categories = ["همه", "اسپرسو", "دَمی", "سرد"];
+    private static readonly CultureInfo PersianCulture = CultureInfo.GetCultureInfo("fa-IR");
+    private readonly List<CartLine> cart = [];
+    private readonly CheckoutFormModel checkoutForm = new();
+    private string selectedCategory = "همه";
+    private string? notice;
+    private string? checkoutError;
+    private readonly List<string> checkoutValidationErrors = [];
+    private string email = "";
+    private bool cartIsOpen;
+    private bool checkoutIsOpen;
+    private bool isStartingPayment;
+    private bool subscribed;
+
+    private IEnumerable<CoffeeProduct> VisibleProducts =>
+        selectedCategory == "همه" ? CoffeeCatalog.Products : CoffeeCatalog.Products.Where(product => product.Category == selectedCategory);
+
+    private int CartCount => cart.Sum(line => line.Quantity);
+    private long CartSubtotal => cart.Sum(line => (long)line.Product.Price * line.Quantity);
+    private long CartDeliveryFee => OrderPricing.GetDeliveryFee(CartSubtotal);
+    private long CartTotal => CartSubtotal + CartDeliveryFee;
+
+    [SupplyParameterFromQuery(Name = "payment")]
+    public string? PaymentState { get; set; }
+
+    [SupplyParameterFromQuery(Name = "orderId")]
+    public string? OrderId { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (PaymentState is "complete" && Guid.TryParse(OrderId, out var orderId))
+        {
+            var receipt = await OrderPaymentService.GetReceiptAsync(orderId, CancellationToken.None);
+            notice = receipt?.Status == "Paid"
+                ? receipt.ReferenceId is null
+                    ? "پرداخت سفارش با موفقیت تأیید شد. ممنون از خریدت!"
+                    : $"پرداخت سفارش با موفقیت انجام شد؛ کد پیگیری: {receipt.ReferenceId}"
+                : "وضعیت پرداخت هنوز تأیید نشده است. لطفاً چند لحظه‌ی دیگر دوباره بررسی کن.";
+        }
+        else if (PaymentState == "cancelled")
+        {
+            notice = "پرداخت انجام نشد؛ سفارش تا زمان پرداخت نهایی نشده است.";
+        }
+        else if (PaymentState == "failed")
+        {
+            notice = "پرداخت از طرف درگاه تأیید نشد. اگر از حسابت مبلغی کسر شده، با پشتیبانی تماس بگیر.";
+        }
+        else if (PaymentState == "error")
+        {
+            notice = "بررسی پرداخت موقتاً با خطا روبه‌رو شد. لطفاً صفحه را دوباره بارگذاری کن.";
+        }
+        else if (PaymentState == "unknown")
+        {
+            notice = "تراکنش پرداخت پیدا نشد. اگر مبلغی کسر شده، با پشتیبانی تماس بگیر.";
+        }
+    }
+
+    private static string FormatPrice(long amount) => amount.ToString("N0", PersianCulture);
+
+    private void AddToCart(CoffeeProduct product)
+    {
+        var existingLine = cart.FirstOrDefault(line => line.Product.Id == product.Id);
+        if (existingLine is null)
+        {
+            cart.Add(new CartLine(product));
+        }
+        else
+        {
+            existingLine.Quantity++;
+        }
+
+        notice = $"{product.Name} به سبدت اضافه شد.";
+    }
+
+    private void ChangeQuantity(CartLine line, int change)
+    {
+        line.Quantity += change;
+        if (line.Quantity <= 0)
+        {
+            cart.Remove(line);
+        }
+    }
+
+    private void RemoveFromCart(CartLine line) => cart.Remove(line);
+
+    private void Checkout()
+    {
+        if (cart.Count == 0)
+        {
+            return;
+        }
+
+        cartIsOpen = false;
+        checkoutError = null;
+        checkoutValidationErrors.Clear();
+        checkoutIsOpen = true;
+    }
+
+    private void CloseCheckout()
+    {
+        if (!isStartingPayment)
+        {
+            checkoutIsOpen = false;
+        }
+    }
+
+    private async Task StartPaymentAsync()
+    {
+        if (isStartingPayment)
+        {
+            return;
+        }
+
+        isStartingPayment = true;
+        checkoutError = null;
+        checkoutValidationErrors.Clear();
+        try
+        {
+            checkoutForm.Mobile = OrderPaymentService.NormalizeDigits(checkoutForm.Mobile);
+            var validationResults = new List<ValidationResult>();
+            var validationContext = new ValidationContext(checkoutForm);
+            if (!Validator.TryValidateObject(checkoutForm, validationContext, validationResults, validateAllProperties: true))
+            {
+                checkoutValidationErrors.AddRange(validationResults
+                    .Select(result => result.ErrorMessage)
+                    .OfType<string>());
+                return;
+            }
+
+            var request = new CheckoutRequest(
+                checkoutForm.CustomerName,
+                checkoutForm.Mobile,
+                checkoutForm.Address,
+                cart.Select(line => new CheckoutItem(line.Product.Id, line.Quantity)).ToArray());
+            var result = await OrderPaymentService.StartAsync(request, CancellationToken.None);
+            if (!result.Succeeded || result.RedirectUrl is null)
+            {
+                checkoutError = result.Error ?? "ساخت لینک پرداخت ناموفق بود.";
+                return;
+            }
+
+            cart.Clear();
+            Navigation.NavigateTo(result.RedirectUrl.ToString(), forceLoad: true);
+        }
+        finally
+        {
+            isStartingPayment = false;
+        }
+    }
+
+    private void Subscribe()
+    {
+        subscribed = true;
+        email = "";
+    }
+
+    private sealed class CartLine(CoffeeProduct product)
+    {
+        public CoffeeProduct Product { get; } = product;
+        public int Quantity { get; set; } = 1;
+    }
+
+    private sealed class CheckoutFormModel
+    {
+        [Required(ErrorMessage = "نام و نام خانوادگی را وارد کن.")]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "نام باید بین ۲ تا ۱۰۰ حرف باشد.")]
+        public string CustomerName { get; set; } = "";
+
+        [Required(ErrorMessage = "شماره موبایل را وارد کن.")]
+        [RegularExpression("^09\\d{9}$", ErrorMessage = "شماره موبایل باید با ۰۹ شروع شود و ۱۱ رقم باشد.")]
+        public string Mobile { get; set; } = "";
+
+        [Required(ErrorMessage = "نشانی محل تحویل را وارد کن.")]
+        [StringLength(500, MinimumLength = 10, ErrorMessage = "نشانی باید بین ۱۰ تا ۵۰۰ حرف باشد.")]
+        public string Address { get; set; } = "";
+    }
+}
